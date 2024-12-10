@@ -1,3 +1,0 @@
-[submodule "ui/NodeGraphDataFlowQt/NodeGraphQt"]
-	path = ui/NodeGraphDataFlowQt/NodeGraphQt
-	url = https://github.com/jchanvfx/NodeGraphQt.git
