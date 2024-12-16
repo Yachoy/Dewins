@@ -82,6 +82,9 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
     """
 
     value_changed = QtCore.Signal(str, object)
+
+    mouse_click = QtCore.Signal(QtCore.QEvent)
+
     """
     Signal triggered when the ``value`` attribute has changed.
     
@@ -98,6 +101,13 @@ class NodeBaseWidget(QtWidgets.QGraphicsProxyWidget):
         self._name = name
         self._label = label
         self._node = None
+
+    #TODO only when this two defs overrides, only than he start detects...
+    # and classes which extends it have same problem, or its just dont work at all. funny thing, so funny
+    def mousePressEvent(self, event):
+        print("click")
+        self.mouse_click.emit(event)
+        super().mousePressEvent(event)
 
     def setToolTip(self, tooltip):
         tooltip = tooltip.replace('\n', '<br/>')

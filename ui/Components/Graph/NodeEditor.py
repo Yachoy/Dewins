@@ -3,34 +3,16 @@ from Dewins.ui.NodeGraph import (
     NodeGraph,
     PropertiesBinWidget,
     NodesTreeWidget,
-    NodesPaletteWidget
+    NodesPaletteWidget, NodeObject
 )
 from Qt.QtWidgets import QWidget, QVBoxLayout
-
 from Dewins.ui.NodeGraph import BaseNode, BaseNodeCircle
 
-
-class BasicNodeA(BaseNode):
-    """
-    A node class with 2 inputs and 2 outputs.
-    """
-
-    # unique node identifier.
-    __identifier__ = 'nodes'
-
-    # initial default node name.
-    NODE_NAME = 'node A'
-
-    def __init__(self):
-        super(BasicNodeA, self).__init__()
-
-        # create node inputs.
-        self.add_input('in A')
-        self.add_input('in B')
-
-        # create node outputs.
-        self.add_output('out A')
-        self.add_output('out B')
+from Dewins.ui.Components.Graph.Nodes.InputNode import (
+    TextInputNode,
+    ImageInputNode,
+    InputNodePrototype
+)
 
 
 class GraphEditor:
@@ -44,11 +26,15 @@ class GraphEditor:
 
         self.graph.widget.resize(1100, 800)
         self.graph.register_nodes([
-            BasicNodeA
+            TextInputNode,
+            ImageInputNode
         ])
 
-        self.n_basic_a = self.graph.create_node(
-            'nodes.BasicNodeA', text_color='#feab20')
+    def run(self):
+        inputs = []
+        for node in self.graph.all_nodes():
+            if isinstance(node, InputNodePrototype):
+                inputs.append(node)
 
     def context_menu_open_file(self):
         pass

@@ -1,0 +1,115 @@
+
+import sys
+import os
+
+from PySide6.QtCore import Qt, QUrl, QEvent, QObject
+from PySide6.QtGui import QPixmap, QColor, QPalette, QDragEnterEvent, QDropEvent, QMouseEvent
+from PySide6.QtWidgets import (QApplication, QLabel, QWidget, QVBoxLayout, QFileDialog, QVBoxLayout, QLabel)
+
+from Dewins.ui.NodeGraph import NodeBaseWidget
+
+
+class TextInputNodeWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._layout = QVBoxLayout(self)
+
+        self._layout.addWidget(QLabel("Hello World"))
+
+
+class NodeWrapperTextInputWidget(NodeBaseWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.set_name('my_widget')
+
+        self.set_custom_widget(TextInputNodeWidget())
+
+    def get_value(self):
+        pass
+
+    def set_value(self, text):
+        pass
+
+
+class ImageInputNodeWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setAcceptDrops(True)
+        self.initUI()
+
+    def initUI(self):
+        self.layout = QVBoxLayout()
+        self.label = QLabel("Image")
+        self.label.setAlignment(Qt.AlignCenter)
+
+        palette = self.label.palette()
+        palette.setColor(QPalette.WindowText, Qt.white)
+        self.label.setPalette(palette)
+
+        self.label.setStyleSheet("font-size: 16px;")
+
+        self.layout.addWidget(self.label)
+        self.setLayout(self.layout)
+
+
+        # Эффект наведения мыши
+        self.label.installEventFilter(self)
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if watched == self.label and event.type() == QEvent.Enter:
+            palette = self.label.palette()
+            palette.setColor(QPalette.WindowText, QColor(200, 200, 200))  # Светлее при наведении
+            self.label.setPalette(palette)
+        elif watched == self.label and event.type() == QEvent.Leave:
+            palette = self.label.palette()
+            palette.setColor(QPalette.WindowText, Qt.white)  # Белый, когда мышь уходит
+            self.label.setPalette(palette)
+        return super().eventFilter(watched, event)
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        if event.mimeData().hasUrls():
+            event.setDropAction(Qt.CopyAction)
+            event.accept()
+            for url in event.mimeData().urls():
+                if url.isLocalFile():
+                    filepath = url.toLocalFile()
+                    self.setImage(filepath)
+        else:
+            event.ignore()
+
+    def openFileDialog(self, event: QMouseEvent):
+        filepath, _ = QFileDialog.getOpenFileName(None, "Выберите изображение", "",
+                                                  "Изображения (*.png *.jpg *.jpeg *.bmp *.gif)")
+        if filepath:
+            self.setImage(filepath)
+
+    def setImage(self, filepath):
+        pixmap = QPixmap(filepath)
+
+        if not pixmap.isNull():
+            self.label.setPixmap(pixmap.scaled(self.label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            self.label.setText("Не удалось загрузить изображение")
+
+
+class NodeWrapperImageInputWidget(NodeBaseWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.set_name('my_widget')
+        self.wid = ImageInputNodeWidget()
+        self.set_custom_widget(self.wid)
+
+        self.mouse_click.connect(self.wid.openFileDialog)
+        self.resize(220, 110)
+
+    def get_value(self):
+        pass
+
+    def set_value(self, text):
+        pass
