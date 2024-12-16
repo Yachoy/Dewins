@@ -1,0 +1,2 @@
+class InputBackend:
+    pass

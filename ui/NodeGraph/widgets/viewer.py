@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import math
+
+import PySide6.QtGui
 from distutils.version import LooseVersion
 
 from Qt import QtGui, QtCore, QtWidgets
@@ -601,10 +603,10 @@ class NodeViewer(QtWidgets.QGraphicsView):
             delta = previous_pos - current_pos
             self._set_viewer_pan(delta.x(), delta.y())
 
-        if not self.ALT_state:
-            if self.SHIFT_state or self.CTRL_state:
-                if not self._LIVE_PIPE.isVisible():
-                    self._cursor_text.setPos(self.mapToScene(event.pos()))
+        #if not self.ALT_state:
+        if self.SHIFT_state or self.CTRL_state:
+            if not self._LIVE_PIPE.isVisible():
+                self._cursor_text.setPos(self.mapToScene(event.pos()))
 
         if self.LMB_state and self._rubber_band.isActive:
             rect = QtCore.QRect(self._origin_pos, event.pos()).normalized()
@@ -655,6 +657,7 @@ class NodeViewer(QtWidgets.QGraphicsView):
                             self.COLLIDING_state = True
                             break
 
+
         self._previous_pos = event.pos()
         super(NodeViewer, self).mouseMoveEvent(event)
 
@@ -666,11 +669,16 @@ class NodeViewer(QtWidgets.QGraphicsView):
             delta = event.angleDelta().y()
             if delta == 0:
                 delta = event.angleDelta().x()
-        try:
-            self._set_viewer_zoom(delta, pos=event.pos())
-        except AttributeError:
-            # For PyQt5 and above
-            self._set_viewer_zoom(delta, pos=event.position().toPoint())
+        if self.ALT_state and self.CTRL_state:
+            self._set_viewer_pan(0, delta)  # Vertical movement
+        elif self.ALT_state:
+            self._set_viewer_pan(delta, 0) # Horizontal movement
+        else:
+            try:
+                self._set_viewer_zoom(delta, pos=event.pos())
+            except AttributeError:
+                # For PyQt5 and above
+                self._set_viewer_zoom(delta, pos=event.position().toPoint())
 
     def dropEvent(self, event):
         pos = self.mapToScene(event.pos())
@@ -702,6 +710,30 @@ class NodeViewer(QtWidgets.QGraphicsView):
     def dragLeaveEvent(self, event):
         event.ignore()
 
+    def update_overlay_text(self, release: bool = False):
+        if release:
+            pass
+        # show cursor text
+        overlay_text = None
+        self._cursor_text.setVisible(False)
+        if not self.ALT_state:
+            if self.SHIFT_state:
+                overlay_text = '\n    SHIFT:\n    Toggle/Extend Selection'
+            elif self.CTRL_state:
+                overlay_text = '\n    CTRL:\n    Deselect Nodes'
+        elif self.ALT_state and self.SHIFT_state:
+            if self.pipe_slicing:
+                overlay_text = '\n    ALT + SHIFT:\n    Pipe Slicer Enabled'
+        elif self.ALT_state and self.CTRL_state:
+            overlay_text = '\n    ALT + CTRL:\n    Vertical move'
+        elif self.ALT_state:
+            overlay_text = '\n    ALT:\n    Horizontal move'
+
+        if overlay_text:
+            self._cursor_text.setPlainText(overlay_text)
+            self._cursor_text.setPos(self.mapToScene(self._previous_pos))
+            self._cursor_text.setVisible(True)
+
     def keyPressEvent(self, event):
         """
         Key press event re-implemented to update the states for attributes:
@@ -720,30 +752,19 @@ class NodeViewer(QtWidgets.QGraphicsView):
         if event.modifiers() == (QtCore.Qt.AltModifier | QtCore.Qt.ShiftModifier):
             self.ALT_state = True
             self.SHIFT_state = True
+        if event.modifiers() == (QtCore.Qt.ControlModifier | QtCore.Qt.AltModifier):
+            self.CTRL_state = True
+            self.ALT_state = True
 
         if self._LIVE_PIPE.isVisible():
             super(NodeViewer, self).keyPressEvent(event)
             return
 
-        # show cursor text
-        overlay_text = None
-        self._cursor_text.setVisible(False)
-        if not self.ALT_state:
-            if self.SHIFT_state:
-                overlay_text = '\n    SHIFT:\n    Toggle/Extend Selection'
-            elif self.CTRL_state:
-                overlay_text = '\n    CTRL:\n    Deselect Nodes'
-        elif self.ALT_state and self.SHIFT_state:
-            if self.pipe_slicing:
-                overlay_text = '\n    ALT + SHIFT:\n    Pipe Slicer Enabled'
-        if overlay_text:
-            self._cursor_text.setPlainText(overlay_text)
-            self._cursor_text.setPos(self.mapToScene(self._previous_pos))
-            self._cursor_text.setVisible(True)
+        self.update_overlay_text()
 
         super(NodeViewer, self).keyPressEvent(event)
 
-    def keyReleaseEvent(self, event):
+    def keyReleaseEvent(self, event: PySide6.QtGui.QKeyEvent):
         """
         Key release event re-implemented to update the states for attributes:
         - ALT_state
@@ -753,14 +774,19 @@ class NodeViewer(QtWidgets.QGraphicsView):
         Args:
             event (QtGui.QKeyEvent): key event.
         """
-        self.ALT_state = event.modifiers() == QtCore.Qt.AltModifier
-        self.CTRL_state = event.modifiers() == QtCore.Qt.ControlModifier
-        self.SHIFT_state = event.modifiers() == QtCore.Qt.ShiftModifier
+        if event.key() == QtCore.Qt.Key.Key_Alt: #TODO bug with modifies, when press alt+shift, after release alt
+            self.ALT_state = False
+        if event.key() == QtCore.Qt.Key.Key_Control:
+            self.CTRL_state = False
+        if event.key() == QtCore.Qt.Key.Key_Shift:
+            self.SHIFT_state = False
         super(NodeViewer, self).keyReleaseEvent(event)
-
+        #TODO make update ctrl, alt, shift attrs and update text
+        self.update_overlay_text(True)
         # hide and reset cursor text.
-        self._cursor_text.setPlainText('')
-        self._cursor_text.setVisible(False)
+        if not self.ALT_state and not self.CTRL_state and not self.SHIFT_state:
+            self._cursor_text.setPlainText('')
+            self._cursor_text.setVisible(False)
 
     # --- scene events ---
 
