@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import re
+
+import Qt.QtWidgets
 from distutils.version import LooseVersion
 
 from Qt import QtGui, QtCore
@@ -160,7 +162,6 @@ class NodeGraphMenu(object):
         """
         self.qmenu.addSeparator()
         self._items.append(None)
-
 
 class NodesMenu(NodeGraphMenu):
     """

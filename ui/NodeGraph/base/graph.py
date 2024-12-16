@@ -841,7 +841,9 @@ class NodeGraph(QtCore.QObject):
             elif item_type == 'menu':
                 sub_menu = menu.add_menu(menu_data['label'])
                 items = menu_data.get('items', [])
-                self._deserialize_context_menu(sub_menu, items, anchor_path)
+                self._deserialize_context_menu(sub_menu, items, anchor_path),
+            elif item_type == 'text':
+                menu.add_text(menu_data.get("label"))
         elif isinstance(menu_data, list):
             for item_data in menu_data:
                 self._deserialize_context_menu(menu, item_data, anchor_path)

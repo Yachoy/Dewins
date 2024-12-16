@@ -177,6 +177,20 @@
         "file":"./hotkey_functions.py",
         "function_name":"reset_zoom",
         "shortcut":"H"
+      },
+      {
+        "type":"command",
+        "label":"Horizontal-Movement",
+        "file":"./hotkey_functions.py",
+        "function_name":"test1",
+        "shortcut":"Alt"
+      },
+      {
+        "type":"command",
+        "label":"Vertical-Movement",
+        "file":"./hotkey_functions.py",
+        "function_name":"test1",
+        "shortcut":"Alt+Control"
       }
     ]
   },
