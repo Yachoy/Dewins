@@ -177,7 +177,8 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
         return [x for _, _, x in sorted(suggestions)]
 
     def _wire_signals(self):
-        self.line_edit.returnPressed.connect(self._on_search_submitted)
+        #self.line_edit.returnPressed.connect(self._on_search_submitted)
+        # #TODO after enter when search node - the node didn't spawn. I think problem at _on_search_submitted, when event not an Action
         self.line_edit.textChanged.connect(self._on_text_changed)
 
     def _on_text_changed(self, text):
@@ -224,7 +225,8 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
         if not self._block_submit:
             action = self.sender()
             if type(action) is not QtWidgets.QAction:
-                if len(self._searched_actions) > 0:
+
+                if len(self._searched_actions) > 0: #TODO is problem in filling a _searched_actions?
                     action = self._searched_actions[0]
                 else:
                     self._close()

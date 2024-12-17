@@ -14,6 +14,8 @@ from Dewins.ui.Components.Graph.Nodes.InputNode import (
     InputNodePrototype
 )
 
+from Dewins.ui.Components.Graph.Nodes.ProcessNode import CountWordNode
+
 
 class GraphEditor:
     def __init__(self):
@@ -21,13 +23,15 @@ class GraphEditor:
         print(self.BASE_PATH)
         self.hotkey_path = Path(self.BASE_PATH, 'hotkeys', 'hotkeys.json')
         self.graph = NodeGraph()
-
+        self.graph.node_double_clicked.connect(self.run)
         self.graph.set_context_menu_from_file(self.hotkey_path, 'graph')
 
         self.graph.widget.resize(1100, 800)
         self.graph.register_nodes([
+            CountWordNode,
             TextInputNode,
-            ImageInputNode
+            ImageInputNode,
+
         ])
 
     def run(self):
@@ -35,6 +39,8 @@ class GraphEditor:
         for node in self.graph.all_nodes():
             if isinstance(node, InputNodePrototype):
                 inputs.append(node)
+        for i in inputs:
+            i.run()
 
     def context_menu_open_file(self):
         pass

@@ -2,9 +2,10 @@
 import sys
 import os
 
+from PySide6.QtGui import QFont
 from PySide6.QtCore import Qt, QUrl, QEvent, QObject
 from PySide6.QtGui import QPixmap, QColor, QPalette, QDragEnterEvent, QDropEvent, QMouseEvent
-from PySide6.QtWidgets import (QApplication, QLabel, QWidget, QVBoxLayout, QFileDialog, QVBoxLayout, QLabel)
+from PySide6.QtWidgets import (QApplication, QLabel, QWidget, QVBoxLayout, QFileDialog, QVBoxLayout, QLabel, QPlainTextEdit)
 
 from Dewins.ui.NodeGraph import NodeBaseWidget
 
@@ -13,23 +14,22 @@ class TextInputNodeWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self._layout = QVBoxLayout(self)
-
-        self._layout.addWidget(QLabel("Hello World"))
-
+        self.input_plain_text = QPlainTextEdit("Text here...")
+        self.input_plain_text.setFont(QFont("Times New Roman", 16))
+        self._layout.addWidget(self.input_plain_text)
 
 class NodeWrapperTextInputWidget(NodeBaseWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.set_name('my_widget')
-
-        self.set_custom_widget(TextInputNodeWidget())
+        self.custom_widget = TextInputNodeWidget()
+        self.set_custom_widget(self.custom_widget)
 
     def get_value(self):
         pass
 
     def set_value(self, text):
         pass
-
 
 class ImageInputNodeWidget(QWidget):
     def __init__(self):
@@ -96,7 +96,6 @@ class ImageInputNodeWidget(QWidget):
             self.label.setPixmap(pixmap.scaled(self.label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
         else:
             self.label.setText("Не удалось загрузить изображение")
-
 
 class NodeWrapperImageInputWidget(NodeBaseWidget):
     def __init__(self, parent=None):
