@@ -175,13 +175,26 @@ class ContManager:
 
 if __name__ == "__main__":
     ### Testing ###
-    absolute = os.getcwd()
+
+    ### Generation ###
     file_manager = ContManager({
-        Folder(Path(absolute+"TestingFileManager/")): {
-            File(absolute+"TestingFileManager/Example1.txt"):"Default content of file1",
-            File(absolute+"TestingFileManager/Example2.txt"):"Default content of file2",
-            Folder(Path(absolute+"TestingFileManager/UnderFolder/")):{
-                File(absolute+"TestingFileManager/UnderFolder/under_file.json"):"{}"
+        Folder(Path("TestingFileManager/")): {
+            File("TestingFileManager/Example1.txt"):"Default content of file1",
+            File("TestingFileManager/Example2.txt"):"Default content of file2",
+            Folder(Path("TestingFileManager/UnderFolder/")):{
+                File("TestingFileManager/UnderFolder/under_file.json"):"{}",
+                File("TestingFileManager/UnderFolder/Example1.txt"): "Hello world from under example 1"
             }
         }
     })
+    file_manager.realise()
+    ### Search ###
+    assert len(file_manager.find_by_name("Example1.txt")) == 2
+    assert (tmp:=file_manager.find_by_path("TestingFileManager/")) is not None and isinstance(tmp, Folder)
+    assert (tmp := file_manager.find_by_path("under_file.json")) is not None and isinstance(tmp, File)
+    ###
+
+    assert len(file_manager.get_files()) == 4
+    f = File("./log.txt")
+    assert f.is_created == False
+    # f.realise() ???
