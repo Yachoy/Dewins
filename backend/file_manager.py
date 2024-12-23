@@ -3,12 +3,12 @@ import pathlib
 import typing
 from abc import *
 from typing import *
-
+from pathlib import Path
 
 class File:
     path: pathlib.Path
     _local_save_content: Any
-    _ctx: ContextManager
+    _ctx: Optional[ContextManager]
 
     def __init__(self, path: typing.Union[str, pathlib.Path], ctx: Optional["ContManager"] = None, default_context: str = ""):
         self.path = path
@@ -81,9 +81,9 @@ class Folder:
     path: pathlib.Path
     _files: List[File]
 
-    def __init__(self, pth: pathlib.Path, files: List[File]):
+    def __init__(self, pth: pathlib.Path, files: List[File] = None):
         self.path = pth
-        self._files = files
+        self._files = files if files is not None else []
 
     @property
     def name(self) -> str:
@@ -131,8 +131,8 @@ class Folder:
 class ContManager:
     _paths: Dict[Folder, Union[Dict[Folder, ...], File]]
 
-    def __init__(self, pathes: Dict[Folder, Union[Dict[Folder, ...], File]]):
-        self._paths = pathes
+    def __init__(self, paths: Dict[Folder, Union[Dict[Folder, ...], File]]):
+        self._paths = paths
 
     def get_files(self) -> List[File]:
         fin_list: List[File] = list()
@@ -172,3 +172,16 @@ class ContManager:
             if str(i) == path_file:
                 return i
         return None
+
+if __name__ == "__main__":
+    ### Testing ###
+    absolute = os.getcwd()
+    file_manager = ContManager({
+        Folder(Path(absolute+"TestingFileManager/")): {
+            File(absolute+"TestingFileManager/Example1.txt"):"Default content of file1",
+            File(absolute+"TestingFileManager/Example2.txt"):"Default content of file2",
+            Folder(Path(absolute+"TestingFileManager/UnderFolder/")):{
+                File(absolute+"TestingFileManager/UnderFolder/under_file.json"):"{}"
+            }
+        }
+    })
