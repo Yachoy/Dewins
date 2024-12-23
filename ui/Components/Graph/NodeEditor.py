@@ -1,4 +1,10 @@
 from pathlib import Path
+from typing import *
+
+import PySide6.QtWidgets
+
+from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import CommonNodePrototype
+from Dewins.ui.Components.Graph.Nodes.Prototypes.VisualiseNode import VisualiseNode
 from Dewins.ui.NodeGraph import (
     NodeGraph,
     PropertiesBinWidget,
@@ -9,8 +15,8 @@ from Qt.QtWidgets import QWidget, QVBoxLayout
 from Dewins.ui.NodeGraph import BaseNode, BaseNodeCircle
 
 from Dewins.ui.Components.Graph.Nodes.InputNode import (
-    TextInputNode,
-    ImageInputNode,
+    TextNode,
+    ImageNode,
     InputNodePrototype
 )
 
@@ -20,18 +26,19 @@ from Dewins.ui.Components.Graph.Nodes.ProcessNode import CountWordNode
 class GraphEditor:
     def __init__(self):
         self.BASE_PATH = Path(__file__).parent.parent.parent.resolve() #TODO parentx3? Грех на душу берешь, грех
-        print(self.BASE_PATH)
         self.hotkey_path = Path(self.BASE_PATH, 'hotkeys', 'hotkeys.json')
         self.graph = NodeGraph()
-        self.graph.node_double_clicked.connect(self.run)
         self.graph.set_context_menu_from_file(self.hotkey_path, 'graph')
+
+        self.graph.node_double_clicked.connect(self.run)
+        self.graph.node_created.connect(self.on_node_created)
 
         self.graph.widget.resize(1100, 800)
         self.graph.register_nodes([
             CountWordNode,
-            TextInputNode,
-            ImageInputNode,
-
+            TextNode,
+            ImageNode,
+            VisualiseNode
         ])
 
     def run(self):
@@ -40,10 +47,17 @@ class GraphEditor:
             if isinstance(node, InputNodePrototype):
                 inputs.append(node)
         for i in inputs:
-            i.run()
+            if i.run(): return True
+        return False
 
-    def context_menu_open_file(self):
-        pass
-
-    def get_nodes_list(self):
-        pass
+    wins = []
+    def on_node_created(self, node: CommonNodePrototype):
+        if isinstance(node, VisualiseNode):
+            print("Create win")
+            win = QWidget()
+            layout = QVBoxLayout(win)
+            label = PySide6.QtWidgets.QLabel(win)
+            layout.addWidget(label)
+            node.set_visualise_label(label)
+            win.show()
+            self.wins.append(win)

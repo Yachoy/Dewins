@@ -1,42 +1,16 @@
 from abc import abstractmethod
 from typing import *
 
+from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import PortOut
 from Dewins.ui.NodeGraph import (
     BaseNode, Port
 )
+from Dewins.ui.Components.Graph.Nodes.Prototypes.ProcessNodeProto import ProcessNodePrototype
 from Dewins.ui.Components.Graph.Nodes.widgets.ProcessWidgets import (
     NodeWrapperCountWordsNodeWidget
 )
 
-class ProcessNodePrototype(BaseNode):
-    def __init__(self):
-        super().__init__()
-        self._data_for_process = {}
-
-    _data_for_process: Dict[str, Any]
-
-    def is_can_be_processed(self) -> bool:
-        for name, p in self.inputs().items():
-            if self._data_for_process.get(name, None) is None:
-                return False
-        return True
-
-    def put_data_at_port(self, port: Port, data: Any):
-        self._data_for_process[port.name()] = data
-
-    @abstractmethod
-    def process(self) -> bool: ...
-
-    def get_next_process(self) -> Callable[[], bool]:
-        pass
-
 class CountWordNode(ProcessNodePrototype):
-    def process(self) -> bool:
-        data: str = self._data_for_process["Text"]
-        self.node_widget.custom_widget.count_words_label.setText(f"Count: {len(data.split())}")
-
-        return True
-
     __identifier__ = "Processor"
     NODE_NAME = "Word Counter"
 
@@ -48,5 +22,15 @@ class CountWordNode(ProcessNodePrototype):
         self.node_widget = NodeWrapperCountWordsNodeWidget(self.view)
         self.add_custom_widget(self.node_widget, tab='Custom')
 
+    _last_arg_int: int = 0
 
+    def load_data_from_output_port_for_input(self, port: PortOut) -> Any:
+        if port.name() == "Int":
+            return self._last_arg_int
 
+    def process(self) -> bool:
+        data: str = self.get_data_at_inputs_ports()["Text"]
+        self._last_arg_int = len(data.split())
+        self.node_widget.custom_widget.count_words_label.setText(f"Count: {self._last_arg_int}")
+
+        return True
