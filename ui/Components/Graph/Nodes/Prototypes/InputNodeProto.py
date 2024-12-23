@@ -27,34 +27,32 @@ class InputNodePrototype(CommonNodePrototype):
                         return False
 
             elif isinstance(current, BaseNode):
+                result_run = None
+                if not is_input:
+                    result_run = current.run()
+                    print(f"[{parent.name()}->{current.name()}] Execute node {current.name()}({current.get_data_at_inputs_ports()})")
+
                 ### prepare inputs of executing nodes ###
                 nodes = current.get_connected_outputs_nodes()
                 next_execute_nodes = []
-                for parent_output, child_input, child_node in nodes:
+                for current_output, next_input, child_node in nodes:
                     try:
-                        data = parent.load_data_from_output_port_for_input(parent_output)
-                        child_node.put_data_at_input_port(child_input, data)
+                        data = current.load_data_from_output_port_for_input(current_output)
+                        child_node.put_data_at_input_port(next_input, data)
                     except:
                         traceback.print_exc()
-                        print(f"At parsing output arg in Node[{parent.name()}] Port[{parent_output.name()}] catch a error. Is this port reader was realise?")
+                        print(f"At parsing output arg in Node[{current.name()}] Port[{next_input.name()}] catch a error. Is this port reader was realise?")
                         return False
                     next_execute_nodes.append(child_node)
 
                 #TODO Is need to be classified like this a error occur in process node, or that is answer of im not ready?
-                if is_input:
+                if len(next_execute_nodes) == 0:
+                    print(f"Done executing at node {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
+                else:
                     print(f"Done run {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
-                    if not run_node(current, next_execute_nodes, False):
-                        return False
-                    return True
-
-                if current.run():
-                    if len(next_execute_nodes) == 0:
-                        print(f"Done executing at node {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
-                    else:
-                        print(f"Done run {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
-                        if not run_node(current, next_execute_nodes, False):
-                            return False
-                        return True
+                if not run_node(current, next_execute_nodes, False):
+                    return False
+                return True
 
             else:
                 print(f"Whata heck bro? How do you put here not a node? [parent:{parent}, current:{current}]")

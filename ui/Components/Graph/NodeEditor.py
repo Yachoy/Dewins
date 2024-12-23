@@ -41,14 +41,16 @@ class GraphEditor:
             VisualiseNode
         ])
 
-    def run(self):
+    def run(self) -> bool:
         inputs = []
+        print("Start scheme")
         for node in self.graph.all_nodes():
             if isinstance(node, InputNodePrototype):
                 inputs.append(node)
         for i in inputs:
-            if i.run(): return True
-        return False
+            if not i.run(): return False
+            print("################")
+        return True
 
     wins = []
     def on_node_created(self, node: CommonNodePrototype):
