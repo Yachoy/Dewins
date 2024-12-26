@@ -14,6 +14,7 @@ class TextInputNodeWidget(QWidget):
         self.input_plain_text.setFont(QFont("Times New Roman", 16))
         self._layout.addWidget(self.input_plain_text)
 
+
 class NodeWrapperTextInputWidget(NodeBaseWidget):
     def __init__(self, parent=None):
         super().__init__(parent)

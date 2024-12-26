@@ -1,4 +1,5 @@
 from typing import *
+from math import *
 
 from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import PortOut
 from Dewins.ui.Components.Graph.Nodes.Prototypes.InputNodeProto import InputNodePrototype
@@ -43,3 +44,4 @@ class ImageNode(InputNodePrototype):
     def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
         if port.name() == "Image":
             return self.node_widget.custom_widget.get_last_path_image()
+
