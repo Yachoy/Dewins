@@ -3,6 +3,7 @@ from abc import abstractmethod
 from typing import *
 
 import cv2
+
 from cv2 import *
 
 from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import PortOut
@@ -90,6 +91,8 @@ class CalculatorNode(ProcessNodePrototype):
         self.node_widget.custom_widget.multButton.clicked.connect(self.multiply())
         self.node_widget.custom_widget.divButton.clicked.connect(self.division())
         return True
+
+
 class TrigCalcNode(ProcessNodePrototype):
     angle: float = 0.0
     degrees: bool = True
@@ -102,17 +105,21 @@ class TrigCalcNode(ProcessNodePrototype):
         self.node_widget = NodeWrapperTrigCalcWidget(self.view)
         self.add_custom_widget(self.node_widget, tab="Custom")
 
+        self.node_widget.custom_widget.sinButton.clicked.connect(self.sinCount)
+        self.node_widget.custom_widget.cosButton.clicked.connect(self.cosCount)
+        self.node_widget.custom_widget.tanButton.clicked.connect(self.tanCount)
+        self.node_widget.custom_widget.cotanButton.clicked.connect(self.cotanCount)
+        self.node_widget.custom_widget.degreeButton.clicked.connect(self.rad2degr)
+        self.node_widget.custom_widget.radianButton.clicked.connect(self.degr2rad)
+
+    type_calculation: str = "sin"
 
     def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
-        if port.name() == "Number":
-            return self.node_widget.custom_widget.input_plain_text.toPlainText()
+        if port.name() == "Result":
+            return self.node_widget.custom_widget.resultLabel.text()
 
     def sinCount(self):
-        if self.degrees:
-            self.result = math.degrees(math.sin(self.angle))
-        else:
-            self.result = math.sin(self.angle)
-        self.node_widget.custom_widget.resultLabel.setText(str(self.result))
+        self.type_calculation = "sin"
 
     def cosCount(self):
         if self.degrees:
@@ -142,15 +149,12 @@ class TrigCalcNode(ProcessNodePrototype):
         self.degrees = True
 
     def process(self) -> bool:
-        self.angle = self.get_data_at_inputs_ports()['Angle']
-        self.result = math.degrees(math.sin(self.angle))
+        self.angle = float(self.get_data_at_inputs_ports()['Angle'])
+        if self.type_calculation == "sin":
+            self.result = math.degrees(math.sin(self.angle)) if self.degrees else math.sin(self.angle)
+        elif self.type_calculation == "cos":
+            pass
         self.node_widget.custom_widget.resultLabel.setText(str(self.result))
-        self.node_widget.custom_widget.sinButton.clicked.connect(self.sinCount())
-        self.node_widget.custom_widget.cosButton.clicked.connect(self.cosCount())
-        self.node_widget.custom_widget.tanButton.clicked.connect(self.tanCount())
-        self.node_widget.custom_widget.cotanButton.clicked.connect(self.cotanCount())
-        self.node_widget.custom_widget.degreeButton.clicked.connect(self.rad2degr())
-        self.node_widget.custom_widget.radianButton.clicked.connect(self.degr2rad())
         return True
 
 class ImageTransform(ProcessNodePrototype):
