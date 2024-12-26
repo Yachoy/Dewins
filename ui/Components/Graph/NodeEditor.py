@@ -17,10 +17,14 @@ from Dewins.ui.NodeGraph import BaseNode, BaseNodeCircle
 from Dewins.ui.Components.Graph.Nodes.InputNode import (
     TextNode,
     ImageNode,
-    InputNodePrototype
+    InputNodePrototype,
 )
 
-from Dewins.ui.Components.Graph.Nodes.ProcessNode import CountWordNode
+from Dewins.ui.Components.Graph.Nodes.ProcessNode import (
+    CountWordNode,
+    CalculatorNode,
+    TrigCalcNode
+)
 
 
 class GraphEditor:
@@ -38,7 +42,9 @@ class GraphEditor:
             CountWordNode,
             TextNode,
             ImageNode,
-            VisualiseNode
+            VisualiseNode,
+            CalculatorNode,
+            TrigCalcNode
         ])
 
     def run(self) -> bool:

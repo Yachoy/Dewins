@@ -37,7 +37,7 @@ class File:
             file.write(data)
 
     def read(self) -> Optional[str]:
-        if self.extension not in ['txt', 'html', 'json', 'csv']:
+        if self.extension not in ['txt', 'html', 'json', 'csv', "xlsx", "xlsm", "xls", "xltx", "xltm"]:
             return None
         answer: str = str()
         with open(self.path, "r") as file:
@@ -53,7 +53,7 @@ class File:
 
     def make_like_me(self, _obj: "File"):
         print(self.extension)
-        if self.extension not in ['txt', 'html', 'json', 'csv']:
+        if self.extension not in ['txt', 'html', 'json', 'csv', "xlsx", "xlsm", "xls", "xltx", "xltm"]:
             return None
         answer: str = str()
         with open(str(_obj.getname()), "r+") as f:
