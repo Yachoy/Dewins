@@ -3,7 +3,7 @@ import sys
 import os
 
 from PySide6.QtCore import Qt, QUrl, QEvent, QObject
-from PySide6.QtGui import QPixmap, QColor, QPalette, QDragEnterEvent, QDropEvent, QMouseEvent
+from PySide6.QtGui import (QPixmap, QColor, QPalette, QDragEnterEvent, QDropEvent, QMouseEvent, QFont)
 from PySide6.QtWidgets import (QApplication, QLabel, QWidget, QVBoxLayout, QFileDialog, QHBoxLayout, QPushButton, QTextEdit)
 
 from Dewins.ui.NodeGraph import NodeBaseWidget
@@ -131,21 +131,40 @@ class ImageTransformNodeWidget(QWidget):
         super().__init__(parent)
         self._layout = QVBoxLayout(self)
         self.layout1 = QHBoxLayout()
+        self._layout.addLayout(self.layout1)
         self.label1 = QLabel("Разрешение: ")
+        self.font = QFont()
+        self.font.setPointSize(16)
+        self.label1.setFont(self.font)
         self.layout1.addWidget(self.label1)
         self.widthTextEdit = QTextEdit(self)
         self.widthTextEdit.setObjectName(u'widthTextEdit')
+        self.widthTextEdit.setFixedHeight(30)
         self.layout1.addWidget(self.widthTextEdit)
+        self.label1_1 = QLabel('  X  ')
+        self.label1_1.setFont(self.font)
+        self.layout1.addWidget(self.label1_1)
         self.heightTextEdit = QTextEdit(self)
         self.heightTextEdit.setObjectName(u'heightTextEdit')
+        self.heightTextEdit.setFixedHeight(30)
         self.layout1.addWidget(self.heightTextEdit)
+        self.layout1.setSpacing(0)
+        self.layout1.setStretch(0, 10)
+        self.layout1.setStretch(1, 44)
+        self.layout1.setStretch(2, 2)
+        self.layout1.setStretch(3, 44)
         self.layout2 = QHBoxLayout()
-        self._layout.addWidget(self.layout2)
-        self.label2 = QLabel("Поворот, °: ")
+        self._layout.addLayout(self.layout2)
+        self.label2 = QLabel("Поворот, °:   ")
+        self.label2.setFont(self.font)
         self.layout2.addWidget(self.label2)
         self.rotationTextEdit = QTextEdit(self)
         self.rotationTextEdit.setObjectName(u'rotationTextEdit')
+        self.rotationTextEdit.setFixedHeight(30)
         self.layout2.addWidget(self.rotationTextEdit)
+        self.layout2.setSpacing(1)
+        self.layout2.setStretch(0, 19)
+        self.layout2.setStretch(1, 81)
 
 
 class NodeWrapperImageTransformWidget(NodeBaseWidget):

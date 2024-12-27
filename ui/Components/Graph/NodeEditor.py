@@ -23,7 +23,8 @@ from Dewins.ui.Components.Graph.Nodes.InputNode import (
 from Dewins.ui.Components.Graph.Nodes.ProcessNode import (
     CountWordNode,
     CalculatorNode,
-    TrigCalcNode
+    TrigCalcNode,
+    ImageTransform
 )
 
 
@@ -44,7 +45,8 @@ class GraphEditor:
             ImageNode,
             VisualiseNode,
             CalculatorNode,
-            TrigCalcNode
+            TrigCalcNode,
+            ImageTransform
         ])
 
     def run(self) -> bool:

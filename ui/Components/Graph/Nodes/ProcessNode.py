@@ -171,9 +171,10 @@ class TrigCalcNode(ProcessNodePrototype):
                 self.result = math.degrees(math.tan(self.angle)**(-1)) if self.degrees else math.sin(self.angle)**(-1)
             case _:
                 print("Ну, что сказать... Ошибка")
-                self.node_widget.custom_widget.resultLabel.setText("Ошаибка!")
+                self.node_widget.custom_widget.resultLabel.setText("Ошибка!")
         self.node_widget.custom_widget.resultLabel.setText(str(self.result))
         return True
+
 
 class ImageTransform(ProcessNodePrototype):
     fileImage: Union[File, ImageFile]
@@ -189,12 +190,19 @@ class ImageTransform(ProcessNodePrototype):
         self.add_input("Image")
         self.add_input("Type")
         self.add_input("Width")
-        self.add_input("Width")
         self.add_input("Height")
         self.add_input("Rotation")
         self.add_output("Image")
         self.node_widget = NodeWrapperImageTransformWidget(self.view)
         self.add_custom_widget(self.node_widget, tab="Custom")
+        print("Инициализация")
+        self.node_widget.custom_widget.rotationTextEdit.setText(str(self.rotation))
+        self.node_widget.custom_widget.rotationTextEdit.textChanged.connect(self.changeRotation)
+        self.node_widget.custom_widget.widthTextEdit.textChanged.connect(self.changeWidth)
+        self.node_widget.custom_widget.heightTextEdit.textChanged.connect(self.changeHeight)
+
+    def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
+        return self.image
 
     @staticmethod
     def rotate_image(image, angle):
@@ -202,6 +210,7 @@ class ImageTransform(ProcessNodePrototype):
         center = (w // 2, h // 2)
         M = cv2.getRotationMatrix2D(center, angle, 1.0)
         rotated_image = cv2.warpAffine(image, M, (w, h))
+
         return rotated_image
 
     def changeRotation(self):
@@ -226,11 +235,7 @@ class ImageTransform(ProcessNodePrototype):
         self.width = self.get_data_at_inputs_ports()["Width"]
         self.height = self.get_data_at_inputs_ports()["Height"]
         self.rotation = self.get_data_at_inputs_ports()["Rotation"]
-        self.node_widget.custom_widget.rotationTextEdit.setText(str(self.rotation))
         self.type = self.get_data_at_inputs_ports()["Type"]
-        self.node_widget.custom_widget.rotationTextEdit.changedText.connect(self.changeRotation)
-        self.node_widget.custom_widget.widthTextEdit.changedText.connect(self.changeWidth)
-        self.node_widget.custom_widget.heightTextEdit.changedText.connect(self.changeHeight)
 
         return True
 
