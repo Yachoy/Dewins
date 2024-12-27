@@ -51,9 +51,11 @@ class GraphEditor:
         inputs = []
         print("Start scheme")
         for node in self.graph.all_nodes():
-            if isinstance(node, InputNodePrototype):
+            print(node)
+            if node.__identifier__ == "Input":
                 inputs.append(node)
         for i in inputs:
+            print(i)
             if not i.run(): return False
             print("################")
         return True
