@@ -216,5 +216,3 @@ class ImageTransform(ProcessNodePrototype):
 
         return True
 
-
-
