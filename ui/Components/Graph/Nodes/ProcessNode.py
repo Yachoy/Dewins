@@ -51,6 +51,7 @@ class CalculatorNode(ProcessNodePrototype):
     numb1: float = 0.0
     numb2: float = 0.0
     operation_type: str = "sum"
+    __identifier__ = "Processor"
 
     def __init__(self):
         super().__init__()
@@ -118,6 +119,7 @@ class TrigCalcNode(ProcessNodePrototype):
     angle: Any = 0.0
     degrees: bool = True
 
+    __identifier__ = "Processor"
 
     def __init__(self):
         super().__init__()
@@ -177,13 +179,14 @@ class TrigCalcNode(ProcessNodePrototype):
 
 
 class ImageTransform(ProcessNodePrototype):
-    fileImage: Union[File, ImageFile]
+    fileImage: str
     image: Any
     type: str
     width: int
     height: int
     rotation: int = 0
 
+    __identifier__ = "Processor"
 
     def __init__(self):
         super().__init__()
@@ -230,7 +233,7 @@ class ImageTransform(ProcessNodePrototype):
 
     def process(self) -> bool:
         self.fileImage = self.get_data_at_inputs_ports()["Image"]
-        self.image = cv2.imread(str(self.fileImage.path))
+        self.image = cv2.imread(self.fileImage)
         self.type = self.get_data_at_inputs_ports()["Type"]
         self.width = self.get_data_at_inputs_ports()["Width"]
         self.height = self.get_data_at_inputs_ports()["Height"]
