@@ -19,9 +19,6 @@ class TriggerNodePrototype(InputNodePrototype):
         self.custom_widget = NodeWrapperTriggerNodeWidget(self.view)
         self.add_custom_widget(self.custom_widget, tab='Custom')
 
-    def run(self, is_input: bool = False) -> bool:
-        return False
-
     @abstractmethod
     def tick(self): raise NotImplementedError
 

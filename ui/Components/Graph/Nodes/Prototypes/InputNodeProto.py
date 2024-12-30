@@ -7,6 +7,8 @@ from Dewins.ui.NodeGraph import (
 )
 from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import CommonNodePrototype, PortOut
 
+def print_str(data: str, length: int = 120):
+    return str(data)[:length] + '...' if len(str(data)) > length else str
 
 class InputNodePrototype(CommonNodePrototype):
 
@@ -41,21 +43,21 @@ class InputNodePrototype(CommonNodePrototype):
                         child_node.put_data_at_input_port(next_input, data)
                     except:
                         traceback.print_exc()
-                        print(f"At parsing output arg in Node[{current.name()}] Port[{next_input.name()}] catch a error. Is this port reader was realise?")
+                        print_str(f"At parsing output arg in Node[{current.name()}] Port[{next_input.name()}] catch a error. Is this port reader was realise?")
                         return False
                     next_execute_nodes.append(child_node)
 
                 #TODO Is need to be classified like this a error occur in process node, or that is answer of im not ready?
                 if len(next_execute_nodes) == 0:
-                    print(f"Done executing at node {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
+                    print_str(f"Done executing at node {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
                 else:
-                    print(f"Done run {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
+                    print_str(f"Done run {current.name()}[{current.get_data_at_inputs_ports()}]: next {len(next_execute_nodes)}")
                 if not run_node(current, next_execute_nodes, False):
                     return False
                 return True
 
             else:
-                print(f"Whata heck bro? How do you put here not a node? [parent:{parent}, current:{current}]")
+                print_str(f"Whata heck bro? How do you put here not a node? [parent:{parent}, current:{current}]")
                 return False
 
             return True

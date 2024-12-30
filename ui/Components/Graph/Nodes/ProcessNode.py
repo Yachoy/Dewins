@@ -3,6 +3,7 @@ from abc import abstractmethod
 from typing import *
 
 import cv2
+import numpy as np
 
 from cv2 import *
 
@@ -239,6 +240,44 @@ class ImageTransform(ProcessNodePrototype):
         self.height = self.get_data_at_inputs_ports()["Height"]
         self.rotation = self.get_data_at_inputs_ports()["Rotation"]
         self.type = self.get_data_at_inputs_ports()["Type"]
+
+        return True
+
+class ImageBlur(ProcessNodePrototype):
+    __identifier__ = "Processor"
+    NODE_NAME = "Blur Image"
+    _image_cache: np.array = None
+
+    def __init__(self):
+        super().__init__()
+        self.add_input("Image")
+        self.add_input("X (int)")
+        self.add_input("Y (int)")
+        self.add_input("Radius")
+
+        self.add_output("Image")
+
+    def load_data_from_output_port_for_input(self, port: PortOut) -> Any:
+        if port.name() == "Image":
+            return self._image_cache
+
+    def process(self) -> bool:
+        img: np.array = self.get_data_at_inputs_ports()["Image"]
+        x = int(self.get_data_at_inputs_ports()["X (int)"])
+        y = int(self.get_data_at_inputs_ports()["Y (int)"])
+        r = int(self.get_data_at_inputs_ports()["Radius"])
+
+        # Создаем маску
+        mask = np.zeros(img.shape[:2], dtype=np.uint8)
+        cv2.circle(mask, (x, y), r, 255, -1)
+
+        # Блюрим все изображение
+        blurred_img = cv2.GaussianBlur(img, (21, 21), 0)
+
+        # Копируем заблюренную область в оригинальное изображение
+        img[mask == 255] = blurred_img[mask == 255]
+
+        self._image_cache = img
 
         return True
 

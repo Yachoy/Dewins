@@ -56,6 +56,13 @@ class NodeGraph(QtCore.QObject):
     :emits: registered nodes
     """
 
+    node_deserialized = QtCore.Signal(NodeObject)
+    """
+    Signal triggered when a node is deserialized from Dict.
+
+    :parameters: :class:`NodeGraphQt.NodeObject`
+    :emits: created node
+    """
     node_created = QtCore.Signal(NodeObject)
     """
     Signal triggered when a node is created in the node graph.
@@ -1839,6 +1846,8 @@ class NodeGraph(QtCore.QObject):
                         'input_ports': n_data['input_ports'],
                         'output_ports': n_data['output_ports']
                     })
+
+                self.node_deserialized.emit(node)
 
         # build the connections.
         for connection in data.get('connections', []):

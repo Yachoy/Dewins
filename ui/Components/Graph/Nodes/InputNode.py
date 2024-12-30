@@ -1,6 +1,8 @@
 from typing import *
 from math import *
 
+import cv2
+
 from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import PortOut
 from Dewins.ui.Components.Graph.Nodes.Prototypes.InputNodeProto import InputNodePrototype
 from Dewins.ui.NodeGraph.base.port import Port
@@ -44,5 +46,18 @@ class ImageNode(InputNodePrototype):
 
     def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
         if port.name() == "Image":
-            return File(self.node_widget.custom_widget.get_last_path_image())
+            return cv2.imread(self.node_widget.custom_widget.get_last_path_image())
 
+
+class NumberNode(InputNodePrototype):
+    __identifier__ = "Input"
+    NODE_NAME = "Number Input"
+    _num = 0
+    def __init__(self):
+        super().__init__()
+        self.add_output("Number")
+        self.add_text_input("Number[int,float]", '', '0', "" )
+
+    def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
+        if port.name() == "Number":
+            return self.get_widget("Number[int,float]").get_value()
