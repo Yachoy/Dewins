@@ -1,9 +1,11 @@
 #!/usr/bin/python
 import re
 from collections import OrderedDict
+from sqlite3 import connect
 
 from Qt import QtCore, QtWidgets, QtGui
 
+import Dewins.ui.NodeGraph.widgets.tab_search
 from Dewins.ui.NodeGraph.constants import ViewerEnum, ViewerNavEnum
 
 
@@ -177,7 +179,7 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
         return [x for _, _, x in sorted(suggestions)]
 
     def _wire_signals(self):
-        #self.line_edit.returnPressed.connect(self._on_search_submitted)
+        self.line_edit.returnPressed.connect(self._on_search_submitted)
         # #TODO after enter when search node - the node didn't spawn. I think problem at _on_search_submitted, when event not an Action
         self.line_edit.textChanged.connect(self._on_text_changed)
 
@@ -203,6 +205,7 @@ class TabSearchMenuWidget(QtWidgets.QMenu):
             self.removeAction(action)
             action.triggered.connect(self._on_search_submitted)
         del self._searched_actions[:]
+
 
     def _set_menu_visible(self, visible):
         for menu in self._menus.values():

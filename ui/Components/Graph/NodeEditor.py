@@ -16,8 +16,7 @@ from Dewins.ui.NodeGraph import BaseNode, BaseNodeCircle
 
 from Dewins.ui.Components.Graph.Nodes.InputNode import (
     TextNode,
-    ImageNode,
-    InputNodePrototype,
+    ImageNode
 )
 
 from Dewins.ui.Components.Graph.Nodes.ProcessNode import (
@@ -26,6 +25,8 @@ from Dewins.ui.Components.Graph.Nodes.ProcessNode import (
     TrigCalcNode,
     ImageTransform
 )
+
+from Dewins.ui.Components.Qt.VisualiseWinWidgets import WidgetVisualise
 
 
 class GraphEditor:
@@ -53,12 +54,12 @@ class GraphEditor:
         inputs = []
         print("Start scheme")
         for node in self.graph.all_nodes():
-            print(node)
             if node.__identifier__ == "Input":
                 inputs.append(node)
         for i in inputs:
-            print(i)
-            if not i.run(): return False
+            if not i.run():
+                print("Что-то пошло не так....")
+                return False
             print("################")
         return True
 
@@ -66,10 +67,7 @@ class GraphEditor:
     def on_node_created(self, node: CommonNodePrototype):
         if isinstance(node, VisualiseNode):
             print("Create win")
-            win = QWidget()
-            layout = QVBoxLayout(win)
-            label = PySide6.QtWidgets.QLabel(win)
-            layout.addWidget(label)
-            node.set_visualise_label(label)
-            win.show()
+            win = WidgetVisualise()
+            node.set_visualise_widget(win)
+            win.show() #TODO except in future this needs to make mechanism of creating widgets (also may be use QDocker?)
             self.wins.append(win)

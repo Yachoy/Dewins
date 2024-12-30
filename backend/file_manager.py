@@ -11,7 +11,10 @@ class File:
     _ctx: Optional[ContextManager]
 
     def __init__(self, path: typing.Union[str, pathlib.Path], ctx: Optional["ContManager"] = None, default_context: str = ""):
-        self.path = path
+        if isinstance(path, str):
+            self.path = Path(path)
+        else:
+            self.path = path
         self._local_save_content = default_context
         self._ctx = ctx
 

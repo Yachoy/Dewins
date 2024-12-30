@@ -11,6 +11,7 @@ from Dewins.ui.Components.Graph.Nodes.widgets.InputWidgets import (
     NodeWrapperTextInputWidget,
     NodeWrapperImageInputWidget
 )
+from Dewins.backend.file_manager import File
 
 
 class TextNode(InputNodePrototype):
@@ -43,5 +44,5 @@ class ImageNode(InputNodePrototype):
 
     def load_data_from_output_port_for_input(self, port: PortOut) -> Optional[Any]:
         if port.name() == "Image":
-            return self.node_widget.custom_widget.get_last_path_image()
+            return File(self.node_widget.custom_widget.get_last_path_image())
 
