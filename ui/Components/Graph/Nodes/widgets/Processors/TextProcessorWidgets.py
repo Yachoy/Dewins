@@ -55,7 +55,7 @@ class CalculatorNodeWidget(QWidget):
         self._layout.addWidget(self.divButton)
         self.multButton = QPushButton(self)
         self.multButton.setObjectName(u'plusButton')
-        self.multButton.setText("+")
+        self.multButton.setText("*")
         self._layout.addWidget(self.multButton)
         self.__layout.setStretch(0, 20)
         self.__layout.setStretch(1, 80)
