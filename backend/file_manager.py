@@ -178,12 +178,12 @@ if __name__ == "__main__":
 
     ### Generation ###
     file_manager = ContManager({
-        Folder(Path("TestingFileManager/")): {
-            File("TestingFileManager/Example1.txt"):"Default content of file1",
-            File("TestingFileManager/Example2.txt"):"Default content of file2",
-            Folder(Path("TestingFileManager/UnderFolder/")):{
-                File("TestingFileManager/UnderFolder/under_file.json"):"{}",
-                File("TestingFileManager/UnderFolder/Example1.txt"): "Hello world from under example 1"
+        Folder(Path("TestingFileManager")): {
+            File("Example1.txt"):"Default content of file1",
+            File("Example2.txt"):"Default content of file2",
+            Folder(Path("UnderFolder")):{
+                File("under_file.json"):"{}",
+                File("Example1.txt"): "Hello world from under example 1"
             }
         }
     })
