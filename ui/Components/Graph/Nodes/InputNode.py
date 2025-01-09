@@ -6,9 +6,6 @@ import cv2
 from Dewins.ui.Components.Graph.Nodes.Prototypes.CommonNodeProto import PortOut
 from Dewins.ui.Components.Graph.Nodes.Prototypes.InputNodeProto import InputNodePrototype
 from Dewins.ui.NodeGraph.base.port import Port
-from Dewins.backend.NodeGraph.Nodes import (
-    InputBackend
-)
 from Dewins.ui.Components.Graph.Nodes.widgets.InputWidgets import (
     NodeWrapperTextInputWidget,
     NodeWrapperImageInputWidget

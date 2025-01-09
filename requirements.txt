@@ -1,0 +1,9 @@
+numpy==2.2.1
+opencv-python-headless==4.10.0.84
+PySide6==6.8.1
+PySide6_Addons==6.8.1
+PySide6_Essentials==6.8.1
+Qt.py==1.4.1
+setuptools==75.6.0
+shiboken6==6.8.1
+types-pyside2==5.15.2.1.7
